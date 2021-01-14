@@ -12,7 +12,7 @@ public class Main {
 
     private static int numOfCities;
 
-    private static int[][] way = new int[numOfCities][numOfCities];
+    private static ArrayList<Integer> dist;
 
     private static int[][] distances;
 
@@ -25,6 +25,17 @@ public class Main {
         file = read.nextLine();
         load(file);
 
+        int numcities = tsp.getNumCities();
+
+        int size = distances.length*distances.length;
+
+        //System.out.println(size);
+
+        System.out.println(dist.get(1));
+
+        //GeneticAlgorithm ga = new GeneticAlgorithm(numcities, 0.001, 0.9, 2, 5);
+
+        //Populacao population = ga.initPopulation(size);
 
     }
 
@@ -38,8 +49,9 @@ public class Main {
             tsp.setNumCities(Integer.parseInt(buffer.readLine()));
 
             int numcities = tsp.getNumCities();
-            int[][] cost = new int[numcities][numcities];
-            System.out.println(numcities);
+            distances = new int[numcities][numcities];
+            dist = new ArrayList<Integer>();
+            //System.out.println(numcities);
 
             int row = 0;
             String line;
@@ -47,9 +59,7 @@ public class Main {
                 String[] tokenizer = line.trim().split(" +");
 
                 for (int j = 0; j < tokenizer.length; j++) {
-                    cost[row][j] = Integer.parseInt(tokenizer[j]);
-                    tsp.setDistances(cost);
-                    System.out.println(tsp.getDistances());
+                    dist.add(Integer.parseInt(tokenizer[j]));
                 }
 
                 row++;
