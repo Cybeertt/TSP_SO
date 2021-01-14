@@ -12,7 +12,9 @@ public class Main {
 
     private static int numOfCities;
 
-    private static ArrayList<Integer> dist;
+    //private static ArrayList<Integer> dist;
+    private static final Path path = new Path(0);
+
 
     private static int[][] distances;
 
@@ -25,13 +27,13 @@ public class Main {
         file = read.nextLine();
         load(file);
 
-        int numcities = tsp.getNumCities();
+        //int numcities = tsp.getNumCities();
 
-        int size = distances.length*distances.length;
+        //int size = distances.length*distances.length;
 
         //System.out.println(size);
 
-        System.out.println(dist.get(1));
+        System.out.println(path.getPaths().get(1));
 
         //GeneticAlgorithm ga = new GeneticAlgorithm(numcities, 0.001, 0.9, 2, 5);
 
@@ -46,11 +48,10 @@ public class Main {
         try {
             file = new FileReader(filename + ".txt");
             buffer = new BufferedReader(file);
-            tsp.setNumCities(Integer.parseInt(buffer.readLine()));
+            path.setNumCities(Integer.parseInt(buffer.readLine()));
 
-            int numcities = tsp.getNumCities();
-            distances = new int[numcities][numcities];
-            dist = new ArrayList<Integer>();
+            //distances = new int[numcities][numcities];
+            //dist = new ArrayList<Integer>();
             //System.out.println(numcities);
 
             int row = 0;
@@ -59,7 +60,7 @@ public class Main {
                 String[] tokenizer = line.trim().split(" +");
 
                 for (int j = 0; j < tokenizer.length; j++) {
-                    dist.add(Integer.parseInt(tokenizer[j]));
+                    path.getPaths().add(Integer.parseInt(tokenizer[j]));
                 }
 
                 row++;
