@@ -55,45 +55,6 @@ public class GeneticAlgorithm extends Thread {
 
     }
 
-
-    public void mutatePath(int[] path, int arr_sz) {
-        int a = rand % arr_sz;
-        int b = rand % arr_sz;
-        int tmp = path[a];
-        path[a] = path[b];
-        path[b] = tmp;
-    }
-
-    public void invertPath(int[] path, int arr_sz) {
-
-        int a = rand % arr_sz;
-        int b = rand % arr_sz;
-        if (a > b) {
-            int aux = a;
-            a = b;
-            b = aux;
-        }
-        int i, j;
-        for (i = a, j = b; i < j; i++, j--) {
-            int tmp = path[i];
-            path[i] = path[j];
-            path[j] = tmp;
-        }
-    }
-
-    public void random_path(int path[], int arr_sz) {
-        for (int i = 0; i < arr_sz; i++) {
-            path[i] = 0;
-        }
-        for (int i=1; i <= arr_sz; i++) {
-            int pos;
-            do {
-                pos = rand % arr_sz;
-            } while (path[pos] != 0);
-            path[pos] = i;
-        }
-    }
-
     public void print_results(int iter_best, double time_best, int min_dist, int path[], int sz) {
         if (sz == 0) return;
         // numero de iteracoes|melhor tempo|distancia_minima|caminho
