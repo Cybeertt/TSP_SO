@@ -13,8 +13,9 @@ public class Main {
     private static int numOfCities;
 
     //private static ArrayList<Integer> dist;
-    private static final Path path = new Path(0);
+    //private static final Path path = new Path(0, new int[]{1, 2, 3, 4, 5});
 
+    private Population population = new Population();
 
     private static int[][] distances;
 
@@ -33,7 +34,7 @@ public class Main {
 
         //System.out.println(size);
 
-        System.out.println(path.getPaths().get(1));
+        //System.out.println(path.getPath().get());
 
         //GeneticAlgorithm ga = new GeneticAlgorithm(numcities, 0.001, 0.9, 2, 5);
 
@@ -60,7 +61,7 @@ public class Main {
                 String[] tokenizer = line.trim().split(" +");
 
                 for (int j = 0; j < tokenizer.length; j++) {
-                    path.getPaths().add(Integer.parseInt(tokenizer[j]));
+                    path.getPath().add(Integer.parseInt(tokenizer[j]));
                 }
 
                 row++;

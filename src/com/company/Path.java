@@ -2,39 +2,26 @@ package com.company;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class Path {
 
     private int numCities;
+    private int path[];
+    private int matrix[][];
+    private Random rand = new Random();
 
-    private final ArrayList<Integer> paths;
-
-    private ArrayList<Cidade> path = new ArrayList<>();
-
-    private ArrayList<Cidade> pathanterior = new ArrayList<>();
-
-
-
-    private double fitness = 0;
-    private int distance = 0;
 
     public Path(int numCities) {
         this.numCities = numCities;
-        this.paths = new ArrayList<>();
-    }
+        this.path = new int[numCities];
+        this.matrix = Population.matrix;
 
-    public ArrayList<Integer> getPaths() {
-        return paths;
-    }
-
-    /*public void generateIndividual() {
-        // Loop through all our destination cities and add them to our tour
-        for (int cityIndex = 0; cityIndex < getNumCities(); cityIndex++) {
-            setCity(cityIndex, PathManager.getCity(cityIndex));
+        int count = 0;
+        for (int i = 0; i < numCities; i++) {
+            path[i] = count+1;
         }
-
-        Collections.shuffle(path);
-    }*/
+    }
 
     public void setNumCities(int numCities) {
         this.numCities = numCities;
@@ -44,54 +31,63 @@ public class Path {
         return numCities;
     }
 
-    /*public void swapCities() {
-        int a = generateRandomIndex();
-        int b = generateRandomIndex();
-        pathanterior = path;
-        Cidade x = path.get(a);
-        Cidade y = path.get(b);
-        path.set(a, y);
-        path.set(b, x);
+    public int[] getPath() {
+        return path;
     }
 
-    public void revertSwap() {
-        path = pathanterior;
+    public void setPath(int[] path) {
+        this.path = path;
     }
 
-    private int generateRandomIndex() {
-        return (int) (Math.random() * path.size());
-    }
-
-    public void setCity(int posicao, Cidade city) {
-        path.set(posicao, city);
-        // If the tours been altered we need to reset the fitness and distance
-        fitness = 0;
-        distance = 0;
-    }
-
-    public Cidade getCity(int index) {
-        return (Cidade)path.get(index);
-    }
-
-    public double getFitness() {
-        if (fitness == 0) {
-            fitness = 1/(double)getDistance();
+    public int computeDistance(int[] path, int numCities, int cost[][]) {
+        int dist = 0;
+        for(int i = 0; i < numCities-1; i++) {
+            int curr = path[i] - 1;
+            int next = path[i+1] - 1;
+            dist += cost[curr][next];
         }
-        return fitness;
+
+        int last = path[numCities-1] - 1;
+        int first = path[0] - 1;
+        dist += cost[last][first];
+        return dist;
     }
 
-    public int getDistance() {
-        int distance = 0;
-        for (int index = 0; index < path.size(); index++) {
-            Cidade starting = getCity(index);
-            Cidade destination;
-            if (index + 1 < path.size()) {
-                destination = getCity(index + 1);
-            } else {
-                destination = getCity(0);
-            }
-            distance += starting.distanceTo(destination);
+    public void mutatePath(int[] path) {
+        int a = rand.nextInt() % numCities;
+        int b = rand.nextInt() % numCities;
+        int tmp = path[a];
+        path[a] = path[b];
+        path[b] = tmp;
+    }
+
+    public void invertPath(int[] path) {
+        int a = rand.nextInt() % numCities;
+        int b = rand.nextInt() % numCities;
+        if (a > b) {
+            int aux = a;
+            a = b;
+            b = aux;
         }
-        return distance;
-    }*/
+        int i, j;
+        for (i = a, j = b; i < j; i++, j--) {
+            int tmp = path[i];
+            path[i] = path[j];
+            path[j] = tmp;
+        }
+    }
+
+    public void random_path(int[] path) {
+        for (int i = 0; i < numCities; i++) {
+            path[i] = 0;
+        }
+        for (int i=1; i <= numCities; i++) {
+            int pos;
+            do {
+                pos = rand.nextInt() % numCities;
+            } while (path[pos] != 0);
+            path[pos] = i;
+        }
+    }
+
 }
