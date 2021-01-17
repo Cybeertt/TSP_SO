@@ -1,71 +1,60 @@
 package com.company;
 
-import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
-
 public class GeneticAlgorithm extends Thread {
 
     /*public static Semaphore search = new Semaphore(1);
 
     public static Semaphore update = new Semaphore(1);*/
 
-    private final Travelling tsp;
+    //private final Travelling tsp;
 
-    private final ArrayList<Integer> sortedPaths;
+    //private final ArrayList<Integer> sortedPaths;
 	
-	private int populationSize;
+	private int populacaoSize;
 
-    private double mutationRate;
+    private double mutacaoRate;
 
-    public static Solution lowerBound;
+    private double crossoverRate;
 
-    private boolean work = true;
+    private int elitismo;
 
-    public int rand = (int)Math.random();
+    protected int tournamentSize;
 
-    public GeneticAlgorithm(Travelling tsp, ArrayList<Integer> sortedPaths, int populationSize, double mutex) {
-        this.tsp = tsp;
-        this.sortedPaths = sortedPaths;
-		this.populationSize = populationSize;
-        this.mutationRate = mutex;
+    public GeneticAlgorithm(int populacaoSize, double mutacaoRate, double crossoverRate, int elitismo,
+                            int tournamentSize) {
+        this.populacaoSize = populacaoSize;
+        this.mutacaoRate = mutacaoRate;
+        this.crossoverRate = crossoverRate;
+        this.elitismo = elitismo;
+        this.tournamentSize = tournamentSize;
     }
 
-    private Solution getSolution(ArrayList<Integer> lowerBound) {
-        ArrayList<Integer> paths = new ArrayList<>(lowerBound);
-        for(int i = 0; i< tsp.getNumCities() ; i++){
-            /*tsp.distances = sortedPaths.get(i);
-            int index = tsp.getDistances().indexOf();
-            if(lowerBound.get(i) == 1){
-                paths.set(index, 1);
-            }else{
-                paths.set(index, 0);
-            }*/
+    public Populacao initPopulation(int chromosomeLength){
+        // Initialize population
+        Populacao populacao = new Populacao(this.populacaoSize, chromosomeLength);
+        return populacao;
+    }
+
+    public double calcFitness(Individuo individual, int num, int []path, int [][]dist){
+        // Get fitness
+        Path route = new Path(num, path);
+        double fitness = 1 / route.computeDistance(path, num, dist);
+
+        // Store fitness
+        individual.setFit(fitness);
+
+        return fitness;
+    }
+
+    public void evalPopulation(Populacao population, int num, int []path, int [][]dist){
+        double populationFitness = 0;
+
+        // Loop over population evaluating individuals and summing population fitness
+        for (Individuo individual : population.getIndividuals()) {
+            populationFitness += this.calcFitness(individual, num, path, dist);
         }
-        Solution solution = new Solution(tsp);
-        return solution;
-    }
 
-    private void geneticAlgorithm(Solution lowerBound) {
-
-        long lStartTime = System.currentTimeMillis();
-        long milisecons = 0;
-        int iterations = 0;
-
-        ArrayList<Integer> firstSolution = new ArrayList<>();
-
-    }
-
-    public void print_results(int iter_best, double time_best, int min_dist, int path[], int sz) {
-        if (sz == 0) return;
-        // numero de iteracoes|melhor tempo|distancia_minima|caminho
-        System.out.printf("%d|%f|%d|", iter_best, time_best, min_dist);
-        for (int i = 0; i < sz - 1; i++) {
-            System.out.printf("%d,", path[i]);
-        }
-        System.out.printf("%d\n", path[sz - 1]);
-    }
-
-    public void doStop() {
-        work = false;
+        double avgFitness = populationFitness / population.size();
+        population.setPopulationFitness(avgFitness);
     }
 }
