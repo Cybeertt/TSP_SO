@@ -13,11 +13,15 @@ public class Main {
     private static int numOfCities;
 
     //private static ArrayList<Integer> dist;
-    //private static final Path path = new Path(0, new int[]{1, 2, 3, 4, 5});
+    private static final Path path = new Path(0);
 
-    private Population population = new Population();
+    //private Population population = new Population();
 
     private static int[][] distances;
+
+    private static int[] dist;
+    private static Random rand = new Random();
+
 
     private static final Travelling tsp = new Travelling(0);
 
@@ -28,13 +32,17 @@ public class Main {
         file = read.nextLine();
         load(file);
 
-        //int numcities = tsp.getNumCities();
 
-        //int size = distances.length*distances.length;
 
-        //System.out.println(size);
+        int numcities = path.getNumCities();
 
-        //System.out.println(path.getPath().get());
+        path.random_path(path.getPath(), numcities);
+
+        path.mutatePath(path.getPath(), numcities);
+
+        int cur_dist = path.computeDistance(path.getPath(), numcities, distances);
+
+        System.out.println(cur_dist);
 
         //GeneticAlgorithm ga = new GeneticAlgorithm(numcities, 0.001, 0.9, 2, 5);
 
@@ -50,8 +58,10 @@ public class Main {
             file = new FileReader(filename + ".txt");
             buffer = new BufferedReader(file);
             path.setNumCities(Integer.parseInt(buffer.readLine()));
+            int n = path.getNumCities();
 
-            //distances = new int[numcities][numcities];
+            dist = new int[n];
+            distances = new int[n][n];
             //dist = new ArrayList<Integer>();
             //System.out.println(numcities);
 
@@ -61,8 +71,10 @@ public class Main {
                 String[] tokenizer = line.trim().split(" +");
 
                 for (int j = 0; j < tokenizer.length; j++) {
-                    path.getPath().add(Integer.parseInt(tokenizer[j]));
+                    dist[j] = j+1;
+                    distances[row][j] = Integer.parseInt(tokenizer[j]);
                 }
+                path.setPath(dist);
 
                 row++;
             }
@@ -70,82 +82,6 @@ public class Main {
             System.out.println(e.getMessage());
         }
     }
-
-       /*FileReader file;
-       BufferedReader buffer;
-       try {
-           file = new FileReader(filename + ".txt");
-           buffer = new BufferedReader(file);
-           tsp.setNumCities(Integer.parseInt(buffer.readLine()));
-
-           int[][] way = new int[tsp.getNumCities()][tsp.getNumCities()];
-           //System.out.println(tsp.getNumCities());
-
-           int numberOfLines = 0;
-           String line = buffer.readLine();
-           while((line = buffer.readLine()) !=null){
-
-               String[] dist = buffer.readLine().split(" ");
-               for (int j=0; j<dist.length; j++) {
-                   way[numberOfLines][j] = Integer.parseInt(dist[j]);
-               }
-               numberOfLines++;
-           }
-
-               while (line != null){
-                   try {
-                       System.out.println(Integer.parseInt(line));
-                   } catch (NumberFormatException nfe) {
-                       System.err.println("Failed to parse integer from line:" + line);
-                       System.err.println(nfe.getMessage());
-                       System.exit(1);
-                   }
-                   line = buffer.readLine();
-
-               }
-
-
-           while ((dist = buffer.readLine()) != null) {
-               for (int i = 0; i < tsp.getNumCities(); i++) {
-                   //way[numberOfLines][i] = Integer.parseInt(dist[i]);
-                   list.add(Integer.parseInt(dist));
-               }
-
-           }
-           int i = 0;
-           String line;
-           while((line = buffer.readLine()) != null) {
-               StringTokenizer st = new StringTokenizer (line);
-               int num=0;
-               //the next line is when you need to calculate the number of columns
-               //otherwise leave blank
-               way[i] = new int[st.countTokens()];
-               while (st.hasMoreTokens()){
-                   int value1 = Integer.parseInt(st.nextToken());
-                   way[i][num] = value1;
-                   num++;
-               }
-               i++;
-           }*/
-
-           /*for(int i = 0; i < tsp.getNumCities(); i++)
-               way[i][i] = 0;
-
-           for(int i = 0; i < tsp.getNumCities(); i++)
-           {
-               StringTokenizer st = new StringTokenizer(buffer.readLine());
-               for(int j = 0; j <= i; j++)
-               {
-                   way[i][j] = Integer.parseInt(st.nextToken());
-                   way[j][i] = way[i][j];
-                   //tsp.s
-                   System.out.print(way[i][j] + " ");
-               }
-           }
-
-           buffer.close();*/
-
-
 
     public static String readTextFile() {
         String fileContent = "";

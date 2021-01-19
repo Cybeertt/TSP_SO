@@ -1,8 +1,7 @@
 package com.company;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
+import java.lang.ArrayIndexOutOfBoundsException;
 
 public class Path {
 
@@ -53,17 +52,17 @@ public class Path {
         return dist;
     }
 
-    public void mutatePath(int[] path) {
-        int a = rand.nextInt() % numCities;
-        int b = rand.nextInt() % numCities;
+    public void mutatePath(int[] path, int numCities) {
+        int a = rand.nextInt(numCities);
+        int b = rand.nextInt(numCities);
         int tmp = path[a];
         path[a] = path[b];
         path[b] = tmp;
     }
 
-    public void invertPath(int[] path) {
-        int a = rand.nextInt() % numCities;
-        int b = rand.nextInt() % numCities;
+    public void invertPath(int[] path, int numCities) {
+        int a = rand.nextInt(numCities);
+        int b = rand.nextInt(numCities);
         if (a > b) {
             int aux = a;
             a = b;
@@ -77,14 +76,14 @@ public class Path {
         }
     }
 
-    public void random_path(int[] path) {
+    public void random_path(int[] path, int numCities)  {
         for (int i = 0; i < numCities; i++) {
             path[i] = 0;
         }
-        for (int i=1; i <= numCities; i++) {
-            int pos;
+        for (int i = 1; i <= numCities; i++) {
+            int pos = 0;
             do {
-                pos = rand.nextInt() % numCities;
+                pos = rand.nextInt(numCities);
             } while (path[pos] != 0);
             path[pos] = i;
         }
