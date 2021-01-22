@@ -1,21 +1,35 @@
 package com.company;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import static java.lang.Integer.parseInt;
 
 public class Main {
 
     private static final Scanner read = new Scanner(System.in);
 
     private static int numOfCities;
+    private static int[][] matrix;
+
+    public static int getNumOfCities() {
+        return numOfCities;
+    }
+
+    public static int[][] getMatrix() {
+        return matrix;
+    }
+
+    private static String filename;
+    private static int numThreads;
+    private static int runningTime;
+    private static int numPath;
+    private static double mutateChance;
 
     //private static ArrayList<Integer> dist;
     //private static final Path path = new Path(0, new int[]{1, 2, 3, 4, 5});
-
-    private Population population = new Population();
 
     private static int[][] distances;
 
@@ -23,149 +37,64 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         //readTextFile();
+        /*
+        filename = args[1];
+        numThreads = parseInt(args[2]);
+        runningTime = parseInt(args[3]);
+        numPath = parseInt(args[4]);
+        mutateChance = parseDouble(args[5]);
+        */
 
-        String file;
-        file = read.nextLine();
-        load(file);
+        filename = read.nextLine();
+        runningTime = parseInt(read.nextLine());
+        loadMatrix(filename);
+        printMatrix(matrix);
 
-        //int numcities = tsp.getNumCities();
+        Population pop = new Population(5);
 
-        //int size = distances.length*distances.length;
 
-        //System.out.println(size);
-
-        //System.out.println(path.getPath().get());
-
-        //GeneticAlgorithm ga = new GeneticAlgorithm(numcities, 0.001, 0.9, 2, 5);
-
-        //Populacao population = ga.initPopulation(size);
-
-    }
-
-    public static void load(String filename) throws IOException  {
-        FileReader file;
-        BufferedReader buffer;
-
-        try {
-            file = new FileReader(filename + ".txt");
-            buffer = new BufferedReader(file);
-            path.setNumCities(Integer.parseInt(buffer.readLine()));
-
-            //distances = new int[numcities][numcities];
-            //dist = new ArrayList<Integer>();
-            //System.out.println(numcities);
-
-            int row = 0;
-            String line;
-            while ((line = buffer.readLine()) != null) {
-                String[] tokenizer = line.trim().split(" +");
-
-                for (int j = 0; j < tokenizer.length; j++) {
-                    path.getPath().add(Integer.parseInt(tokenizer[j]));
-                }
-
-                row++;
-            }
-        } catch (IOException | NumberFormatException e) {
-            System.out.println(e.getMessage());
+        LocalDateTime then = LocalDateTime.now();
+        while (ChronoUnit.SECONDS.between(then, LocalDateTime.now()) < runningTime) {
+            pop.best2Paths();
+            pop.pmxCrossover();
+            pop.deleteWorst2Paths();
         }
+        pop.getPathDists();
     }
 
-       /*FileReader file;
-       BufferedReader buffer;
-       try {
-           file = new FileReader(filename + ".txt");
-           buffer = new BufferedReader(file);
-           tsp.setNumCities(Integer.parseInt(buffer.readLine()));
 
-           int[][] way = new int[tsp.getNumCities()][tsp.getNumCities()];
-           //System.out.println(tsp.getNumCities());
+    public static int[][] loadMatrix(String filename) throws IOException  {
+        BufferedReader buffer = new BufferedReader(new FileReader(filename));
+        numOfCities = parseInt(buffer.readLine());
+        matrix = new int[numOfCities][numOfCities];
 
-           int numberOfLines = 0;
-           String line = buffer.readLine();
-           while((line = buffer.readLine()) !=null){
+        String line;
+        int row = 0;
+        while ((line = buffer.readLine()) != null) {
+            String[] vals = line.trim().split("\\s+");
 
-               String[] dist = buffer.readLine().split(" ");
-               for (int j=0; j<dist.length; j++) {
-                   way[numberOfLines][j] = Integer.parseInt(dist[j]);
-               }
-               numberOfLines++;
-           }
-
-               while (line != null){
-                   try {
-                       System.out.println(Integer.parseInt(line));
-                   } catch (NumberFormatException nfe) {
-                       System.err.println("Failed to parse integer from line:" + line);
-                       System.err.println(nfe.getMessage());
-                       System.exit(1);
-                   }
-                   line = buffer.readLine();
-
-               }
-
-
-           while ((dist = buffer.readLine()) != null) {
-               for (int i = 0; i < tsp.getNumCities(); i++) {
-                   //way[numberOfLines][i] = Integer.parseInt(dist[i]);
-                   list.add(Integer.parseInt(dist));
-               }
-
-           }
-           int i = 0;
-           String line;
-           while((line = buffer.readLine()) != null) {
-               StringTokenizer st = new StringTokenizer (line);
-               int num=0;
-               //the next line is when you need to calculate the number of columns
-               //otherwise leave blank
-               way[i] = new int[st.countTokens()];
-               while (st.hasMoreTokens()){
-                   int value1 = Integer.parseInt(st.nextToken());
-                   way[i][num] = value1;
-                   num++;
-               }
-               i++;
-           }*/
-
-           /*for(int i = 0; i < tsp.getNumCities(); i++)
-               way[i][i] = 0;
-
-           for(int i = 0; i < tsp.getNumCities(); i++)
-           {
-               StringTokenizer st = new StringTokenizer(buffer.readLine());
-               for(int j = 0; j <= i; j++)
-               {
-                   way[i][j] = Integer.parseInt(st.nextToken());
-                   way[j][i] = way[i][j];
-                   //tsp.s
-                   System.out.print(way[i][j] + " ");
-               }
-           }
-
-           buffer.close();*/
-
-
-
-    public static String readTextFile() {
-        String fileContent = "";
-        BufferedReader br = null;
-
-        try {
-            br = new BufferedReader(new FileReader("ex5.txt"));
-            StringBuilder sb = new StringBuilder();
-            String fileLine = "";
-            while ((fileLine = br.readLine()) != null) {
-                System.out.println(fileLine);
-                sb.append(fileLine);
-                sb.append(System.lineSeparator());
+            int col = 0;
+            for(String  c : vals)
+            {
+                matrix[row][col] = Integer.parseInt(c);
+                col++;
             }
-            fileContent = sb.toString();
-            br.close();
-        } catch (IOException ioe) {
-            ioe.getMessage();
+            row++;
         }
-        return fileContent;
+
+        return matrix;
     }
 
+    public static void printMatrix(int[][] matrix) {
+        StringBuilder str = new StringBuilder();
+        int size = matrix.length;
+        for (int[] ints : matrix) {
+            for (int col = 0; col < size; col++) {
+                str.append(String.format("%d ", ints[col]));
+            }
+            str.append("\n");
+        }
+        str.append("\n");
+        System.out.println(str);
+    }
 }
