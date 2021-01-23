@@ -1,69 +1,55 @@
 package com.company;
 
 import java.io.*;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Arrays;
 
+import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
 public class Main {
-
-    private static final Scanner read = new Scanner(System.in);
-
     private static int numOfCities;
     private static int[][] matrix;
 
     public static int getNumOfCities() {
         return numOfCities;
     }
-
     public static int[][] getMatrix() {
         return matrix;
     }
 
-    private static String filename;
-    private static int numThreads;
-    private static int runningTime;
-    private static int numPath;
-    private static double mutateChance;
 
-    //private static ArrayList<Integer> dist;
-    //private static final Path path = new Path(0, new int[]{1, 2, 3, 4, 5});
+    public static Path bestPath;
+    public static Path getBestPath() { return bestPath; }
+    public static void setBestPath(Path bestPath) { Main.bestPath = bestPath; }
 
-    private static int[][] distances;
 
-    private static final Travelling tsp = new Travelling(0);
+    public static void main(String[] args) throws Exception {
+        String filename = args[0];
+        int numThreads = parseInt(args[1]);
+        int runningTime = parseInt(args[2]);
+        int numPath = parseInt(args[3]);
+        double mutateChance = parseDouble(args[4]);
 
-    public static void main(String[] args) throws IOException {
-        //readTextFile();
-        /*
-        filename = args[1];
-        numThreads = parseInt(args[2]);
-        runningTime = parseInt(args[3]);
-        numPath = parseInt(args[4]);
-        mutateChance = parseDouble(args[5]);
-        */
-
-        filename = read.nextLine();
-        runningTime = parseInt(read.nextLine());
         loadMatrix(filename);
         printMatrix(matrix);
 
-        Population pop = new Population(5);
-
-
-        LocalDateTime then = LocalDateTime.now();
-        while (ChronoUnit.SECONDS.between(then, LocalDateTime.now()) < runningTime) {
-            pop.best2Paths();
-            pop.pmxCrossover();
-            pop.deleteWorst2Paths();
+        var threads = new TSPThread[numThreads];
+        for (int i = 0; i < numThreads; i++) {
+            threads[i] = new TSPThread(runningTime, numPath, mutateChance);
+            threads[i].start();
         }
-        pop.getPathDists();
+
+        // Wait for threads to finish and sum results
+        for (int i = 0; i< numThreads; i++) {
+            threads[i].join();
+        }
+        System.out.println("The best path is: " + Arrays.toString(bestPath.getPath()));
+        System.out.println("Distance: " + bestPath.getDist());
+
     }
 
 
-    public static int[][] loadMatrix(String filename) throws IOException  {
+    public static void loadMatrix(String filename) throws IOException  {
         BufferedReader buffer = new BufferedReader(new FileReader(filename));
         numOfCities = parseInt(buffer.readLine());
         matrix = new int[numOfCities][numOfCities];
@@ -82,7 +68,6 @@ public class Main {
             row++;
         }
 
-        return matrix;
     }
 
     public static void printMatrix(int[][] matrix) {
@@ -97,4 +82,5 @@ public class Main {
         str.append("\n");
         System.out.println(str);
     }
+
 }
