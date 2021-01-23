@@ -1,34 +1,32 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
+import static com.company.Main.getMatrix;
+import static com.company.Main.getNumOfCities;
+
 public class Path {
 
-    private int numCities;
-    private int path[];
-    private int matrix[][];
+    private int[] path;
     private Random rand = new Random();
+    private int dist;
 
-
-    public Path(int numCities) {
-        this.numCities = numCities;
-        this.path = new int[numCities];
-        this.matrix = Population.matrix;
+    public Path() {
+        this.path = new int[getNumOfCities()];
 
         int count = 0;
-        for (int i = 0; i < numCities; i++) {
-            path[i] = count+1;
-        }
+        Arrays.fill(path, count + 1);
+
+        random_path(path);
+        this.dist = computeDistance(path, path.length, getMatrix());
     }
 
-    public void setNumCities(int numCities) {
-        this.numCities = numCities;
-    }
-
-    public int getNumCities() {
-        return numCities;
+    public Path(int[] path) {
+        this.path = path;
+        this.dist = computeDistance(path, path.length, getMatrix());
     }
 
     public int[] getPath() {
@@ -39,7 +37,15 @@ public class Path {
         this.path = path;
     }
 
-    public int computeDistance(int[] path, int numCities, int cost[][]) {
+    public int getDist() {
+        return dist;
+    }
+
+    public void setDist(int dist) {
+        this.dist = dist;
+    }
+
+    public int computeDistance(int[] path, int numCities, int[][] cost) {
         int dist = 0;
         for(int i = 0; i < numCities-1; i++) {
             int curr = path[i] - 1;
@@ -54,16 +60,16 @@ public class Path {
     }
 
     public void mutatePath(int[] path) {
-        int a = rand.nextInt() % numCities;
-        int b = rand.nextInt() % numCities;
+        int a = rand.nextInt() % path.length;
+        int b = rand.nextInt() % path.length;
         int tmp = path[a];
         path[a] = path[b];
         path[b] = tmp;
     }
 
     public void invertPath(int[] path) {
-        int a = rand.nextInt() % numCities;
-        int b = rand.nextInt() % numCities;
+        int a = rand.nextInt() % path.length;
+        int b = rand.nextInt() % path.length;
         if (a > b) {
             int aux = a;
             a = b;
@@ -78,14 +84,12 @@ public class Path {
     }
 
     public void random_path(int[] path) {
-        for (int i = 0; i < numCities; i++) {
-            path[i] = 0;
-        }
-        for (int i=1; i <= numCities; i++) {
+        Arrays.fill(path, 0);
+        for (int i=1; i <= path.length; i++) {
             int pos;
             do {
-                pos = rand.nextInt() % numCities;
-            } while (path[pos] != 0);
+                pos = rand.nextInt(path.length) % path.length;
+            } while (!(path[pos] == 0));
             path[pos] = i;
         }
     }
