@@ -138,7 +138,7 @@ public class Population {
                 offSpring2[i] = n2;
             }
         }
-        if (Math.random() > mutateChance) {
+        if (Math.random() < mutateChance) {
             mutatePath(offSpring1);
             mutatePath(offSpring2);
         }

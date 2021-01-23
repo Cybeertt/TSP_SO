@@ -36,5 +36,6 @@ public class TSPThread extends Thread {
         }
         System.out.println(currentThread().getName() + ": " + pop.getBestPath().getDist());
         updatePath(pop);
+        interrupt();
     }
 }

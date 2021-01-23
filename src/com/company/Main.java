@@ -19,8 +19,8 @@ public class Main {
 
 
     public static Path bestPath;
-    public static Path getBestPath() { return bestPath; }
-    public static void setBestPath(Path bestPath) { Main.bestPath = bestPath; }
+    public synchronized static Path getBestPath() { return bestPath; }
+    public synchronized static void setBestPath(Path bestPath) { Main.bestPath = bestPath; }
 
 
     public static void main(String[] args) throws Exception {
@@ -39,7 +39,6 @@ public class Main {
             threads[i].start();
         }
 
-        // Wait for threads to finish and sum results
         for (int i = 0; i< numThreads; i++) {
             threads[i].join();
         }
