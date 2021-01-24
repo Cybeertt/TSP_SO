@@ -3,18 +3,23 @@ package com.company;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static com.company.Main.getBestPath;
-import static com.company.Main.setBestPath;
+import static com.company.Main.*;
 
 public class TSPThread extends Thread {
     private final int runningTime;
     private final int numPath;
     private final double mutateChance;
+    private final Population population;
+
+    public Population getPopulation() {
+        return population;
+    }
 
     public TSPThread(int runningTime, int numPath, double mutateChance) {
         this.runningTime = runningTime;
         this.numPath = numPath;
         this.mutateChance = mutateChance;
+        population = new Population(numPath, mutateChance);
     }
 
     private synchronized void updatePath(Population pop) {
@@ -25,17 +30,16 @@ public class TSPThread extends Thread {
 
     @Override
     public void run() {
-        Population pop = new Population(numPath, mutateChance);
-        pop.calcAllPathDist();
+        population.calcAllPathDist();
 
         LocalDateTime then = LocalDateTime.now();
         while (ChronoUnit.SECONDS.between(then, LocalDateTime.now()) < runningTime) {
-            pop.best2Paths();
-            pop.pmxCrossover();
-            pop.deleteWorst2Paths();
+            population.best2Paths();
+            population.pmxCrossover();
+            population.deleteWorst2Paths();
         }
-        System.out.println(currentThread().getName() + ": " + pop.getBestPath().getDist());
-        updatePath(pop);
+        System.out.println(currentThread().getName() + ": " + population.getBestPath().getDist());
+        updatePath(population);
         interrupt();
     }
 }

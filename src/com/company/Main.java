@@ -1,7 +1,12 @@
 package com.company;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
@@ -17,11 +22,13 @@ public class Main {
         return matrix;
     }
 
-
     public static Path bestPath;
     public synchronized static Path getBestPath() { return bestPath; }
     public synchronized static void setBestPath(Path bestPath) { Main.bestPath = bestPath; }
 
+    public static Population popTotal = new Population();
+    public static Population getPopTotal() { return popTotal; }
+    public static void setPopTotal(Population popTotal) { Main.popTotal = popTotal; }
 
     public static void main(String[] args) throws Exception {
         String filename = args[0];
@@ -46,7 +53,6 @@ public class Main {
         System.out.println("Distance: " + bestPath.getDist());
 
     }
-
 
     public static void loadMatrix(String filename) throws IOException  {
         BufferedReader buffer = new BufferedReader(new FileReader(filename));

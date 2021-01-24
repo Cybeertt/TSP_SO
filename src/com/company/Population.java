@@ -4,61 +4,61 @@ import java.util.*;
 
 public class Population {
 
-    private ArrayList<Path> population;
+    private ArrayList<Path> pathArrayList;
     private ArrayList<Path> bestPaths;
     private double mutateChance;
 
     public Population() {
-        this.population = new ArrayList<>();
+        this.pathArrayList = new ArrayList<>();
         this.bestPaths = new ArrayList<>();
     }
 
     public Population(int numPath, double mutateChance) {
-        this.population = new ArrayList<>();
+        this.pathArrayList = new ArrayList<>();
         this.bestPaths = new ArrayList<>();
         this.mutateChance = mutateChance;
         createPaths(numPath);
         calcAllPathDist();
     }
 
-    public ArrayList<Path> getPopulation() {
-        return population;
+    public ArrayList<Path> getPathArrayList() {
+        return pathArrayList;
     }
 
-    public void setPopulation(ArrayList<Path> population) {
-        this.population = population;
+    public void setPathArrayList(ArrayList<Path> pathArrayList) {
+        this.pathArrayList = pathArrayList;
     }
 
     public void createPath() {
         Path path = new Path();
-        population.add(path);
+        pathArrayList.add(path);
         sortPop();
     }
 
     public void createPaths(int numPaths) {
         for (int i = 0; i<numPaths; i++) {
             Path path = new Path();
-            population.add(path);
+            pathArrayList.add(path);
         }
         sortPop();
     }
 
     public void sortPop() {
-        population.sort(Comparator.comparingInt(Path::getDist));
+        pathArrayList.sort(Comparator.comparingInt(Path::getDist));
     }
 
     public void deletePath(Path path) {
-        population.remove(path);
+        pathArrayList.remove(path);
     }
 
     public ArrayList<Path> getPaths() {
         ArrayList<Path> paths = new ArrayList<>();
-        population.addAll(paths);
+        pathArrayList.addAll(paths);
         return paths;
     }
 
     public void calcAllPathDist() {
-        for (Path path: population
+        for (Path path: pathArrayList
              ) {
             path.computeDistance();
         }
@@ -66,20 +66,20 @@ public class Population {
 
     public Path getBestPath() {
         sortPop();
-        return population.get(0);
+        return pathArrayList.get(0);
     }
 
     public void best2Paths() {
         sortPop();
         bestPaths.clear();
-        bestPaths.add(0, population.get(0));
-        bestPaths.add(1, population.get(1));
+        bestPaths.add(0, pathArrayList.get(0));
+        bestPaths.add(1, pathArrayList.get(1));
     }
 
     public void deleteWorst2Paths() {
         sortPop();
-        population.remove(population.size()-1);
-        population.remove(population.size()-1);
+        pathArrayList.remove(pathArrayList.size()-1);
+        pathArrayList.remove(pathArrayList.size()-1);
     }
 
     public void pmxCrossover() {
@@ -146,8 +146,8 @@ public class Population {
         Path path2 = new Path(offSpring2);
         path1.computeDistance();
         path2.computeDistance();
-        population.add(path1);
-        population.add(path2);
+        pathArrayList.add(path1);
+        pathArrayList.add(path2);
     }
 
     public void mutatePath(int[] path) {

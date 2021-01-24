@@ -9,7 +9,7 @@ import static com.company.Main.getNumOfCities;
 public class Path {
 
     private int[] path;
-    private Random rand = new Random();
+    private final Random rand = new Random();
     private int dist;
 
     public Path() {
